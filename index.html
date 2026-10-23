@@ -157,8 +157,8 @@
 </div>
 
 <script>
-    // Replace with your actual Apps Script Web App Deployment URL
-    const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";
+    // Live Google Apps Script Web App Deployment URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyRZPJxJQT84Z_lWA_9k3dj3gbHDYReRkmQD-uGgadIBTpavO02ToXPhO1jiSAwqdQ/exec";
 
     const modal = document.getElementById('scannerModal');
     let html5QrCode = null;
@@ -277,12 +277,20 @@
 
         fetch(SCRIPT_URL, {
             method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8',
+            },
             body: JSON.stringify({
                 action: 'saveUsageRecord',
                 payload: formData
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(result => {
             document.getElementById('saveBtn').disabled = false;
             if (result.success) {
